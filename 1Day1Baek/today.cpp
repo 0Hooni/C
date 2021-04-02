@@ -2,31 +2,32 @@
 
 using namespace std;
 
+void bubbleSort(int n[], int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = i; j < size; j++)
+        {
+            if (n[i] > n[j])
+                swap(n[i], n[j]);
+        }
+    }
+}
+
 int main()
 {
-    int input[8] = {0};
+    int n = 0;
+    int num[1000] = {0};
 
-    for (int i = 0; i < 8; i++)
-        cin>> input[i];
+    cin >> n;
 
-    int asCheck = 0;
-    int dsCheck = 0;
+    for (int i = 0; i < n; i++)
+        cin >> num[i];
 
-    for (int i = 0; i < 7; i++){
-        if(input[i] + 1 == input[i+1]) asCheck++;
-        if(input[i] - 1 == input[i+1]) dsCheck++;
-    }
+    bubbleSort(num, n);
 
-    if(asCheck == 7) {
-        cout<<"ascending";
-        return 0;
-    }
-    if(dsCheck == 7) {
-        cout<<"descending";
-        return 0;
-    }
+    for (int i = 0; i < n; i++)
+        cout << num[i] << "\n";
 
-    cout<<"mixed";
-    
     return 0;
 }
