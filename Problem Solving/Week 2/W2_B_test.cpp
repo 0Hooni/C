@@ -1,5 +1,3 @@
-// Fail solve
-
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -35,7 +33,7 @@ int main()
             price_y.push_back(y);
             sum.push_back(make_pair(x + y, i));
         }
-        sort(sum.begin(), sum.end());
+        sort(sum.begin(), sum.end(), greater<>());
         ll total_price_x = 0;
         ll total_price_y = 0;
 
@@ -60,4 +58,6 @@ int main()
  * 3. vector을 sort하여 가장 큰 index에 해댕하는 자원들을 선점하게 만든다.
  * 4. 턴은 번갈아가며 쓰기에 i가 짝수며 인하, 홀수면 비룡이 갖게 한다
  * 5. 전부 배분을 마쳤다면 값을 출력하고 프로그램을 끝낸다.
+ *
+ * Error case : Sort 할 때 역순(greather<>())을 넣지 않은 경우
  */
