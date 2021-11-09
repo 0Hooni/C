@@ -1,44 +1,43 @@
 #include <iostream>
-#include <vector>
-#include <string>
 #include <algorithm>
-
+#include <vector>
+#include <stack>
+#include <string.h>
+#include <queue>
+#include <math.h>
 using namespace std;
+typedef long long ll;
 
-void init(){
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
+void init() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
 }
-
-int N;  //시민의 숫자
-int K;  //스타트 넘버
-vector<int> rest;
-vector<int> killed;
-int nowIdx;
-
-int main(){
+int main() {
     init();
-    cin >> N >> K;
-    nowIdx = K-1;
-    for(int i = 0; i < N; i++) {
-        rest.push_back(i+1);
+    int n, price;
+    cin >> n >> price;
+
+    vector<int> coin;
+    for(int i=0; i<n; i++){
+        int tmp; cin >> tmp;
+        coin.push_back(tmp);
     }
+    int t=0;
+    for(int i=n-1; i>=0; i--){
+        if(price < coin[i]) continue;
+        else{
+            while (price >= coin[i]){
+                price -= coin[i];
+                t++;
+            }
 
-
-    while(rest.size() != 0){
-        killed.push_back(rest[nowIdx]);
-        rest.erase(rest.begin() + nowIdx);
-        if(rest.size() == 0) break;
-        nowIdx = (nowIdx + K - 1) % rest.size();
+        }
     }
-
-    cout << "<";
-    while(killed.size()){
-        cout << killed.front();
-        killed.erase(killed.begin());
-        if(killed.size()) cout  << ", ";
-    }
-    cout << ">";
-
+    cout << t;
     return 0;
 }
+
+/*
+ *
+ */
