@@ -56,9 +56,13 @@ public:
     }
     //insert Node
     void addApp(int _id, string _name, int _storage, int _price){
+        Node* isIsNew = searchApp(_id);
+        if(isIsNew != nullptr) return;  //check this data is already inserted in tree
+
         AppData newApp = AppData(_id, _name, _storage, _price);
         Node* newNode = new Node(newApp);   //make Node for insert tree
-        //insert(case : first, not first)
+
+        //insert(case : first insert, not first)
         if(this->root == nullptr) {
             newNode->color = black;
             this->root = newNode;
@@ -73,20 +77,20 @@ public:
                     current = current->left;
                 else current = current->right;
             }
-            //pairing new Node and his parent
-            newNode->parent = curParent;
-
             //insert newNode
             if(newNode->data.application > curParent->data.application)
                 curParent->right = newNode;
             else curParent->left = newNode;
+            //pairing new Node and his parent
+            newNode->parent = curParent;
 
             //check double red appear & fix
-            fixDoubleRed(newNode);
+            checkDoubleRed(newNode);
         }
     }
 
-    void fixDoubleRed(Node* cur){
+    void checkDoubleRed(Node* cur){
+        //check double red while recoloring and restructuring
         while (cur != this->root && cur->parent->color == red){
             Node* grandPar = cur->parent->parent;
             Node* uncle = nullptr;
@@ -102,24 +106,26 @@ public:
                 //check double red appear
                 cur = grandPar;
             }
+
             //restructuring(if uncle Node color is black)
             else {
                 bool rotateSide;
-                //decide rotate side(left or right)
-                //true : rotate left, false : rotate right
+                //decide rotate side(left or right) base on uncle's position
+                //true : rotate right, false : rotate left
                 if(cur->parent == grandPar->left) rotateSide = true;
                 else rotateSide = false;
 
+                //change curved case to flat case
                 if(cur == (rotateSide ? cur->parent->right : cur->parent->left)){
                     cur = cur->parent;
                     if(rotateSide) rotateLeft(cur);
                     else rotateRight(cur);
                 }
+
                 grandPar->color = red;
                 cur->parent->color = black;
                 if(rotateSide) rotateRight(grandPar);
                 else rotateLeft(grandPar);
-
             }
         }
         //root color always be black
@@ -143,9 +149,11 @@ public:
         cur->left = tmp->right;
         //move children
         if(tmp->right != nullptr) tmp->right->parent = cur;
+
+        //move midNode(par) to center of three(grand, par, child) Node
         tmp->parent = cur->parent;
 
-        //case of cur node position
+        //case of cur node position and repair parent
         if(!cur->parent) this->root = tmp;
         else if(cur == cur->parent->left) cur->parent->left = tmp;
         else cur->parent->right = tmp;
@@ -240,7 +248,7 @@ int main(){
             if (find == nullptr) cout << "NULL\n"; //when find node not in tree
             else {
                 cout << store->searchDepth(A) << " " << find->data.name << " "
-                     << find->data.storage << " " << find->data.price << "\n";
+                << find->data.storage << " " << find->data.price << "\n";
             }
         }
         else if(cmd == 'R'){

@@ -1,420 +1,362 @@
-/*
-* C++ 이용하여 Red Black Tree 구현하기
-*
-* 목적 : Red Black Tree 공부 하기 위해 작성했으며,
-*       C++ 이용하여 작성하시는 분들에게 도움이 되고자 했다.
-*
-* 설명 : key 값은 int만 가능 하며 중복 key는 허용 x
-*       이중 연결 리스트로 구현
-*       Red / Black은 식별하기 쉽게 enum이용 했으며, bool 이용시 데이터 크기 절약
-*
-*       class RBTree
-*
-*       변수 :   root node => root노드는 항상 black
-*               leaf node => 끝에 해당하는 노드들은 leaf node들을 가지고 있다.
-*                            leaf node라는 것만 알면 되기 때문에 새로운 노드 삽입 때마다 leaf node를 생성 해줄 필요없이
-*                            모든 말단 노드들은 이 leaf node를 가리키는 식으로 구현
-*                            leaf node는 항상 black
-*
-*       생성자 : RBTREE =>  node 구조체 생성후
-*                          색은 black 초기화
-*                          모든 자식은 nullptr로 초기화.
-*
-*       함수 :   IsKey => key값이 있는지 검사하는 함수
-*               Insert => 삽입 함수
-*               InsertFixUp => 삽입 후 규칙 깨졌을 시 재조정 함수
-*               Delete => 삭제 함수
-*               DeleteFixUp => 삭제 후 규칙 깨졌을 시 재조정 함수
-*               Transplant => 삭제 시 이용하며, 삭제할 노드의 자식 노드를 부모노드에 연결해주는 함수
-*               RotateRight(x) => x기준 오른쪽으로 회전
-*               RotateLeft(x) => x기준 왼쪽으로 회전
-*
-*               Inorder,Preorder,Postorder => 순회 함수
-*               tree_minimum(x), tree_maximum(x) => 노드 x 기준으로 가장 왼쪽, 오른쪽 return 함수
-*
-*               DisplayMenu, SelectMenu => 초기 Menu판 print 함수
-*               Insert_helper,Delete_helper,order_helper,print_helper => 각각 수행시 입력받고 조건 에러 처리 위한 함수 와 tree print 해주는 함수
-*
-*       InsertFixUp과 DeleteFixUp에서 각 case에 대한 설명은 github에 적어 놓았다.
-*
-* 작성자 : gowoonsori
-* github : https://github.com/gowoonsori/my-tech/tree/master/dataStructure/Tree
-* 해당 source gist : https://gist.github.com/gowoonsori/a725e29ef1880f0592fe5760f4908c6b
-*/
-
 #include <iostream>
+#include<vector>
+#include<string>
+using namespace std;
+enum class Color {
+    Red, Black
+};
+/*
+노드를 생성
+left : 왼쪽 자식 노드
+right : 오른쪽 자식 노드
+parent : 부모노드
+color : 노드 색깔 (Black, Red)
+App : ID, Name ,용량, 가격 저장
+*/
+struct Node {
+    Node* left = nullptr;
+    Node* right = nullptr;
+    Node* parent = nullptr;
+    Color color = Color::Black;
+    struct App {
+        int ID = 0;
+        string Name = "";
+        int Size = 0;
+        int price = 0;
+    }app;
+};
+typedef Node* node;
+class Tree {
+    node root;
+    node leafNode;
+public:
+    /*
+     어플리케이션 정보를 입력하는 함수
 
-    enum Color
-            {
-        RED,
-        BLACK
-            };
-    struct node
-            {
-        int key;
-        node *left = nullptr;
-        node *right = nullptr;
-        node *parent = nullptr;
-        Color color = BLACK;
-            };
+     x : 삽일 할 위치 노드
+     p : 부모노드
+     n : 삽입될 새 노드
+     새 노드가 insert될때 Red로 설정한다.
 
-    typedef node *NodePtr;
+    */
+    Tree(){
+        this->root = nullptr;
+        this->leafNode = nullptr;
+    }
+    void insert(int A, string N, int S, int P) {
+        node n = new Node();
+        node x = this->root;
+        node p = nullptr;
+        n->left = leafNode;
+        n->right = leafNode;
+        n->parent = nullptr;
+        n->app = { A,N,S,P };
+        n->color = Color::Red;
 
-    class RBTREE
-            {
-            private:
-                NodePtr root;     //루트 노드
-                NodePtr leafNode; //단말노드
+        //노드가 처음 삽일떄 위치를 app의 ID를 기준으로 찾아준다.
+        while (x != leafNode) {
+            p = x;
+            if (x->app.ID < A) {
+                x = x->right;
+            }
+            else if (x->app.ID > A) {
+                x = x->left;
+            }
+            else {
+                show(x);
+                return;
+            }
 
-                //key값이 있는지 없는지 검사 있으면 pointer 값, 없으면 nullptr
-                NodePtr IsKey(int item)
-                {
-                    NodePtr t = root;
-                    NodePtr parent = NULL;
 
-                    /*key값을 찾거나 없다면 break*/
-                    while (t != NULL && t->key != item)
-                    {
-                        parent = t;
-                        t = (item < parent->key) ? parent->left : parent->right;
+        }
+
+        n->parent = p;
+        /*
+        p가 null값이면 n은 루트노드
+        p의 키값보다 크면 오른쪽 , 작으면 왼쪽에 노드를 연결해준다.
+        */
+        if (p == nullptr) { //루트노드일경우
+            root = n;
+        }
+        else if (n->app.ID > p->app.ID) {
+            p->right = n;
+        }
+        else {
+            p->left = n;
+        }
+        /*
+        n이 루트노드면 Color는 Black으로 해주고 깊이 출력 후 return
+        n의 부모노드가 root노드면 n이 red여도 레드블랙트리에 어긋나지 않으므로 그냥 return 해준다.
+        그외의 경우에는 레드 블랙 트리의 조건을 고려하기 위해 Fix 함수를 실행
+        */
+        if (n->parent == nullptr) {
+            n->color = Color::Black;
+            show(n);
+            return;
+        }
+        else if (n->parent->parent == nullptr) {
+            show(n);
+            return;
+        }
+        else {
+            Fix(n);
+        }
+        show(n);
+        return;
+    }
+    /*
+    레드블랙트리의 조건을 만족시키는 함수
+    grandparent , uncle 노드 생성
+    왼쪾으로 돌지 오른쪽으로 돌지 정하기 위헤 locate 변수 사용
+    */
+    void Fix(node n) {
+        while (n != root && n->parent->color == Color::Red) {
+            node grandparent = n->parent->parent;
+            node uncle;
+            bool locate;
+
+            if (n->parent == grandparent->left) {
+                uncle = grandparent->right;
+                locate = true;
+            }
+            else {
+                uncle = grandparent->left;
+                locate = false;
+            }
+            /* recoloring
+            *  부모노드와 uncle노드를 Black색으로 바꿔주고
+            * grandparent 노드의 색을 Red로 바꿔준다.
+            * grandparent 를 n으로 설정해준다
+            */
+            if (uncle != leafNode && uncle->color == Color::Red) {
+                n->parent->color = Color::Black;
+                uncle->color = Color::Black;
+                grandparent->color = Color::Red;
+                n = grandparent;
+            }
+            /* restructing
+             n을 n의 부모노드로 설정해주고 locate 해당 방향으로 회전 시켜준다.
+             회전 함수 종료 후 설정된n의 부모노드 색을 Black,
+             grandparent로 설정되었던 노드 색을 Red로 설정해준다.
+             이후 grandparent기준으로 locate에 해당되는 방향으로 회전시켜준다.
+            */
+            else {
+                if (n == (locate ? n->parent->right : n->parent->left)) {
+                    n = n->parent;
+                    if (locate == true) {
+                        TurnLeft(n);
                     }
-                    return t;
-                }
-
-                void Insert(int item)
-                {
-                    // cur : 삽입할 곳 찾기위한 포인터 | curPar : 삽입할 곳의 부모노드
-                    NodePtr cur = this->root, curPar = nullptr;
-                    NodePtr newNode = new node();
-                    newNode->key = item;
-                    newNode->color = RED;
-                    newNode->parent = nullptr;
-                    newNode->left = leafNode;
-                    newNode->right = leafNode;
-
-                    /*BST의 일반 삽입 연산*/
-                    while (cur != leafNode)
-                    {
-                        curPar = cur;
-                        if (cur->key < item)
-                            cur = cur->right;
-                        else
-                            cur = cur->left;
-                    }
-
-                    newNode->parent = curPar;
-
-                    if (curPar == nullptr)
-                        root = newNode;
-                    else if (newNode->key > curPar->key)
-                        curPar->right = newNode;
-                    else
-                        curPar->left = newNode;
-
-                    //z가 root노드라면
-                    if (newNode->parent == nullptr)
-                    {
-                        newNode->color = BLACK;
-                        return;
-                    }
-                    // z의 부모노드가 root노드라면 Fix Up 필요없이 red컬러로 붙여주면 된다.
-                    if (newNode->parent->parent == nullptr)
-                    {
-                        return;
-                    }
-                    InsertFixUp(newNode);
-
-                    return;
-                }
-
-                void InsertFixUp(NodePtr cur)
-                {
-                    /*root 노드가 아니고 부모 색이 red라면*/
-                    while (cur != root && cur->parent->color == RED)
-                    {
-                        NodePtr grandparent = cur->parent->parent;
-                        NodePtr uncle = (cur->parent == grandparent->left) ? grandparent->right : grandparent->left;
-                        bool side = (cur->parent == grandparent->left) ? true : false; //if p[cur]가 p[p[cur]]의 왼쪽 자식이면 1 / 오른쪽이면 0
-
-                        /*case 1*/
-                        if (uncle && uncle->color == RED)
-                        {
-                            cur->parent->color = BLACK;
-                            uncle->color = BLACK;
-                            grandparent->color = RED;
-                            cur = grandparent;
-                        }
-
-                        /*case 2
-                            side == true ) p[cur]는 p[p[cur]]의 왼쪽 자식 인 경우이다.
-                            side == false ) p[cur]는 p[p[cur]]의 오른쪽 자식 인 경우이다. */
-                        else
-                        {
-                            /*case 2-1*/
-                            if (cur == (side ? cur->parent->right : cur->parent->left))
-                            {
-                                cur = cur->parent;
-                                side ? RotateLeft(cur) : RotateRight(cur);
-                            }
-                            /*case 2-2*/
-                            cur->parent->color = BLACK;
-                            grandparent->color = RED;
-                            side ? RotateRight(grandparent) : RotateLeft(grandparent);
-                        }
-                    }
-                    root->color = BLACK;
-                }
-
-                /*cur를 중심으로 왼쪽으로 회전*/
-                void RotateLeft(NodePtr cur)
-                {
-                    NodePtr tmp;
-
-                    tmp = cur->right;
-                    cur->right = tmp->left;
-                    if (tmp->left != leafNode)
-                    {
-                        tmp->left->parent = cur;
-                    }
-                    tmp->parent = cur->parent;
-
-                    if (!cur->parent)
-                    {
-                        root = tmp;
-                    }
-                    else if (cur == cur->parent->left)
-                    {
-                        cur->parent->left = tmp;
-                    }
-                    else
-                    {
-                        cur->parent->right = tmp;
-                    }
-                    cur->parent = tmp;
-                    tmp->left = cur;
-                }
-                /*tmp를 중심으로 오른쪽으로 회전*/
-                void RotateRight(NodePtr cur)
-                {
-                    NodePtr tmp;
-
-                    tmp = cur->left;
-                    cur->left = tmp->right;
-                    if (tmp->right != leafNode)
-                    {
-                        tmp->right->parent = cur;
-                    }
-                    tmp->parent = cur->parent;
-
-                    if (!cur->parent)
-                    {
-                        root = tmp;
-                    }
-                    else if (cur == cur->parent->left)
-                    {
-                        cur->parent->left = tmp;
-                    }
-                    else
-                    {
-                        cur->parent->right = tmp;
-                    }
-                    cur->parent = tmp;
-                    tmp->right = cur;
-                }
-
-                /*show tree*/
-                void print_helper(NodePtr root, std::string indent, bool last)
-                {
-                    // print the tree structure on the screen
-                    if (root != leafNode)
-                    {
-                        std::cout << indent;
-                        if (last)
-                        {
-                            std::cout << "R----";
-                            indent += "     ";
-                        }
-                        else
-                        {
-                            std::cout << "L----";
-                            indent += "|    ";
-                        }
-
-                        std::string sColor = (root->color == RED) ? "RED" : "BLACK";
-                        std::cout << root->key << "(" << sColor << ")" << std::endl;
-                        print_helper(root->left, indent, false);
-                        print_helper(root->right, indent, true);
+                    else {
+                        TurnRight(n);
                     }
                 }
+                n->parent->color = Color::Black;
+                grandparent->color = Color::Red;
+                if (locate == true) {
+                    TurnRight(grandparent);
+                }
+                else {
+                    TurnLeft(grandparent);
+                }
+            }
+        }
+        root->color = Color::Black; //루트노드는 항상 Black
+    }
+    /*
+    restructing 오른쪽방향으로 회전
+    n은 현재 기준 노드의 부모노드
+    t는 n의 왼쪽자식노드, t의 오른쪽 자식 노드를 n의 왼쪽 자식노드로 연결
+    n의 부모노드가 없으면 t가 루트노드이며
+    n이 왼쪽자식 노드인 경우에는 t를 n의 부모노드의 왼쪽으로 이동 후 연결시켜준다.
+    */
+    void TurnRight(node n) {
+        node t;
+        t = n->left;
+        n->left = t->right;
+        if (t->right != leafNode)
+        {
+            t->right->parent = n;
+        }
+        t->parent = n->parent;
 
-                /*중위순회*/
-                void Inorder(NodePtr target)
-                {
-                    if (target == leafNode)
-                        return;
-                    Inorder(target->left);
-                    std::cout << target->key << " ";
-                    Inorder(target->right);
-                }
-                /*후위순회*/
-                void Postorder(NodePtr target)
-                {
-                    if (target == leafNode)
-                        return;
-                    Postorder(target->left);
-                    Postorder(target->right);
-                    std::cout << target->key << " ";
-                }
-                /*전위순회*/
-                void Preorder(NodePtr target)
-                {
-                    if (target == leafNode)
-                        return;
-                    std::cout << target->key << " ";
-                    Preorder(target->left);
-                    Preorder(target->right);
-                }
+        if (!n->parent)
+        {
+            root = t;
+        }
+        else if (n == n->parent->left)
+        {
+            n->parent->left = t;
+        }
+        else
+        {
+            n->parent->right = t;
+        }
+        n->parent = t;
+        t->right = n;
+    }
+    /*restructing -왼쪽으로 회전*/
+    void TurnLeft(node n) {
+        node t;
+        t = n->right;
+        n->right = t->left;
+        if (t->left != leafNode)
+        {
+            t->left->parent = n;
+        }
+        t->parent = n->parent;
 
-            public:
-                RBTREE()
-                {
-                    leafNode = new node;
-                    leafNode->color = BLACK;
-                    leafNode->left = nullptr;
-                    leafNode->right = nullptr;
-                    leafNode->parent = nullptr;
-                    root = leafNode;
-                }
-                //최솟값 찾기
-                NodePtr tree_minimum(NodePtr x)
-                {
-                    while (x->left != leafNode)
-                    {
-                        x = x->left;
-                    }
-                    return x;
-                }
-                //최댓값 찾기
-                NodePtr tree_maximum(NodePtr x)
-                {
-                    while (x->right != leafNode)
-                    {
-                        x = x->right;
-                    }
-                    return x;
-                }
-
-                void DisplayMenuBoard()
-                {
-                    std::cout << "               Menu " << std::endl;
-                    std::cout << "          1. Insert Key     " << std::endl;
-                    std::cout << "          2. Delete Key     " << std::endl;
-                    std::cout << "          3. Show Tree      " << std::endl;
-                    std::cout << "          4. choose order   " << std::endl;
-                    std::cout << "          5. show Menu      " << std::endl;
-                    std::cout << "          6. clear Display  " << std::endl;
-                    std::cout << "          7. exit           " << std::endl;
-                    std::cout << std::endl;
-                }
-                void SelectMenu()
-                {
-                    DisplayMenuBoard();
-                    int i = -1;
-
-                    while (i != 8)
-                    {
-                        std::cout << "--> select   :   ";
-                        std::cin >> i;
-                        switch (i)
-                        {
-                            case 1:
-                                Insert_helper();
-                                break;
-                                case 2:
-                                    Delete_helper();
-                                    break;
-                                    case 3:
-                                        print_helper(root, "", true);
-                                        break;
-                                        case 4:
-                                            Order_helper();
-                                            break;
-                                            case 5:
-                                                DisplayMenuBoard();
-                                                break;
-                                                case 6:
-                                                    system("cls");
-                                                    DisplayMenuBoard();
-                                                    break;
-                                                    case 7:
-                                                        return;
-                                                    default:
-                                                        std::cout << " !!! Wrong entered !!!\n"
-                                                        << std::endl;
-                        }
-                    }
-                }
-
-                void Insert_helper()
-                {
-                    int item;
-                    std::cout << "Key to insert  :  ";
-                    std::cin >> item;
-                    if (IsKey(item))
-                    {
-                        std::cout << "!!! " << item << " is already exists !!!\n";
-                        return;
-                    }
-                    Insert(item);
-                }
-                void Delete_helper()
-                {
-                    int item;
-                    std::cout << "Key to delete  :  ";
-                    std::cin >> item;
-                    return;
-                }
-                void Order_helper()
-                {
-                    int i;
-                    std::cout << "         == Order Menu ==" << std::endl;
-                    std::cout << "          1. PreOrder" << std::endl;
-                    std::cout << "          2. InOrder" << std::endl;
-                    std::cout << "          3. PostOrder" << std::endl;
-                    std::cout << "          4. exit" << std::endl;
-                    std::cout << " --> select  :  ";
-
-                    std::cin >> i;
-                    switch (i)
-                    {
-                        case 1:
-                            Preorder(this->root);
-                            std::cout << std::endl;
-                            break;
-                            case 2:
-                                Inorder(this->root);
-                                std::cout << std::endl;
-                                break;
-                                case 3:
-                                    Postorder(this->root);
-                                    std::cout << std::endl;
-                                    break;
-                                    case 4:
-                                        return;
-                                    default:
-                                        std::cout << " !!! Wrong enter !!!\n"
-                                        << std::endl;
-                                        break;
-                    }
-                    return;
-                }
-            };
-
-    int main()
+        if (!n->parent)
+        {
+            root = t;
+        }
+        else if (n == n->parent->left)
+        {
+            n->parent->left = t;
+        }
+        else
+        {
+            n->parent->right = t;
+        }
+        n->parent = t;
+        t->left = n;
+    }
+    /*
+    * insert해준 노드의 깊이를 탐색하는 함수이다.
+    */
+    void show(node n)
     {
-        RBTREE tree;
-        tree.SelectMenu();
+        int sum = 0;
+        while (n != root) {
+            if (n->parent == root) {
+                sum++;
+                break;
+            }
+            n = n->parent;
+            sum++;
+        }
+        cout << sum << "\n";
+    }
+    /*애플리케이션 검색
+    * 루트노드를 중심으로 ID를 찾아 내려간다.
+    * 만약 찾으면 깊이와 정보를 출력한다.
+    * 못찾는경우 NULL출력
+    */
+    void searchApp(int A) {
+        node x = this->root;
+        int depth = 0;
+        while (x != leafNode) {   //x가 leaf노드가 아니면 알맞은 위치로 이동 시킨다.
+            if (x->app.ID < A) {
+                x = x->right;
+                depth++;
+            }
+            else if (x->app.ID > A) {
+                x = x->left;
+                depth++;
+            }
+            else {
+                //찾으면 깊이 출력
+                cout << depth << " " << x->app.Name << " " << x->app.Size << " " << x->app.price << "\n";
+                return;
+            }
 
-        return 0;
+        }
+        cout << "NULL" << "\n";
+        return;
+    }
+    /* 애플리케이션 업데이트
+    * 루트노드(x)를 기준으로 시작하여 ID를 찾는다.
+    * 찾았을 경우 정보를 업데이트하고 depth를 출력한 후 return 한다.
+    * 찾지 못했을 경우 NULL출력
+    */
+    void updateApp(int A, string N, int S, int P) {
+        node x = this->root;
+        int depth = 0;
+        while (x != leafNode) {   //x가 leaf노드가 아니면 알맞은 위치로 이동 시킨다.
+            if (x->app.ID < A) {
+                x = x->right;
+                depth++;
+            }
+            else if (x->app.ID > A) {
+                x = x->left;
+                depth++;
+            }
+            else {
+                x->app.Name = N;
+                x->app.Size = S;
+                x->app.price = P;
+                cout << depth << "\n";
+                return;
+            }
+
+        }
+        cout << "NULL" << "\n";
+        return;
+    }
+    /* 애플리케이션 할인
+    * 전위순회를 사용해 트리를 탐색한다.
+    * 이때 현재 노드가 x보다 작은경우 해당 노드의 왼쪽자식은 더이상 탐색하지 않고 리턴한다.
+    * 만약 해당 노드에 오른쪽 자식이 있을경우에는 오른쪽 자식 노드를 기준으로 순회한다.
+    * 현재노드가 y보다 큰경우에는 해당노드의 오른쪽자식을 더이상 탐색하지 않고 리턴한다.
+    * 만약 해당 노드에 왼쪽자식이 있을경우에는 왼쪽자식노드를 기준으로 순회 한다.
+    */
+    void discountApp(int x, int y, int P) {
+        checkfirst(this->root, x, y, P);
+
+    }
+    void checkfirst(node current, int x, int y, int P) {
+        if (current== leafNode) {
+            return;
+        }
+        else if (current->app.ID < x) {
+            if (current->right!=leafNode) {
+                checkfirst(current->right, x, y, P);;
+            }
+            return;
+        }
+        else if (current->app.ID > y) {
+            if (current->left!=leafNode) {
+                checkfirst(current->left, x, y, P);
+            }
+            return;
+        }
+        checkfirst(current->left, x, y, P);
+        current->app.price = (current->app.price * (100 - P)) / 100;
+
+        checkfirst(current->right, x, y, P);
     }
 
+
+
+};
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    int num;
+    int A, S, P, x, y;
+    string N;
+    char R;
+    cin >> num;
+    Tree* T = new Tree();
+    for (int i = 0; i < num; i++) {
+        cin >> R;
+        if (R == 'I') {
+            cin >> A >> N >> S >> P;
+            T->insert(A, N, S, P);
+
+        }
+        else if (R == 'F') {
+            cin >> A;
+            T->searchApp(A);
+        }
+        else if (R == 'R') {
+            cin >> A >> N >> S >> P;
+            T->updateApp(A, N, S, P);
+        }
+        else if (R == 'D') {
+            cin >> x >> y >> P;
+            T->discountApp(x, y, P);
+        }
+    }
+}
