@@ -129,29 +129,29 @@ Main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/build
 .PHONY : Main/fast
 
-Algo_HW.o: Algo_HW.cpp.o
-.PHONY : Algo_HW.o
+PS_test.o: PS_test.cpp.o
+.PHONY : PS_test.o
 
 # target to build an object file
-Algo_HW.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Algo_HW.cpp.o
-.PHONY : Algo_HW.cpp.o
+PS_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/PS_test.cpp.o
+.PHONY : PS_test.cpp.o
 
-Algo_HW.i: Algo_HW.cpp.i
-.PHONY : Algo_HW.i
+PS_test.i: PS_test.cpp.i
+.PHONY : PS_test.i
 
 # target to preprocess a source file
-Algo_HW.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Algo_HW.cpp.i
-.PHONY : Algo_HW.cpp.i
+PS_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/PS_test.cpp.i
+.PHONY : PS_test.cpp.i
 
-Algo_HW.s: Algo_HW.cpp.s
-.PHONY : Algo_HW.s
+PS_test.s: PS_test.cpp.s
+.PHONY : PS_test.s
 
 # target to generate assembly for a file
-Algo_HW.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Algo_HW.cpp.s
-.PHONY : Algo_HW.cpp.s
+PS_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/PS_test.cpp.s
+.PHONY : PS_test.cpp.s
 
 # Help Target
 help:
@@ -162,9 +162,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Main"
-	@echo "... Algo_HW.o"
-	@echo "... Algo_HW.i"
-	@echo "... Algo_HW.s"
+	@echo "... PS_test.o"
+	@echo "... PS_test.i"
+	@echo "... PS_test.s"
 .PHONY : help
 
 

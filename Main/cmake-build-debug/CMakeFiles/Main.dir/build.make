@@ -66,27 +66,27 @@ include CMakeFiles/Main.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/Main.dir/flags.make
 
-CMakeFiles/Main.dir/Algo_HW.cpp.o: CMakeFiles/Main.dir/flags.make
-CMakeFiles/Main.dir/Algo_HW.cpp.o: ../Algo_HW.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/dev_klein.h/Desktop/CODE/C/Main/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Main.dir/Algo_HW.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Main.dir/Algo_HW.cpp.o -c /Users/dev_klein.h/Desktop/CODE/C/Main/Algo_HW.cpp
+CMakeFiles/Main.dir/PS_test.cpp.o: CMakeFiles/Main.dir/flags.make
+CMakeFiles/Main.dir/PS_test.cpp.o: ../PS_test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/dev_klein.h/Desktop/CODE/C/Main/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Main.dir/PS_test.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Main.dir/PS_test.cpp.o -c /Users/dev_klein.h/Desktop/CODE/C/Main/PS_test.cpp
 
-CMakeFiles/Main.dir/Algo_HW.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Main.dir/Algo_HW.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/dev_klein.h/Desktop/CODE/C/Main/Algo_HW.cpp > CMakeFiles/Main.dir/Algo_HW.cpp.i
+CMakeFiles/Main.dir/PS_test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Main.dir/PS_test.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/dev_klein.h/Desktop/CODE/C/Main/PS_test.cpp > CMakeFiles/Main.dir/PS_test.cpp.i
 
-CMakeFiles/Main.dir/Algo_HW.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Main.dir/Algo_HW.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/dev_klein.h/Desktop/CODE/C/Main/Algo_HW.cpp -o CMakeFiles/Main.dir/Algo_HW.cpp.s
+CMakeFiles/Main.dir/PS_test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Main.dir/PS_test.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/dev_klein.h/Desktop/CODE/C/Main/PS_test.cpp -o CMakeFiles/Main.dir/PS_test.cpp.s
 
 # Object files for target Main
 Main_OBJECTS = \
-"CMakeFiles/Main.dir/Algo_HW.cpp.o"
+"CMakeFiles/Main.dir/PS_test.cpp.o"
 
 # External object files for target Main
 Main_EXTERNAL_OBJECTS =
 
-Main: CMakeFiles/Main.dir/Algo_HW.cpp.o
+Main: CMakeFiles/Main.dir/PS_test.cpp.o
 Main: CMakeFiles/Main.dir/build.make
 Main: CMakeFiles/Main.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/dev_klein.h/Desktop/CODE/C/Main/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable Main"

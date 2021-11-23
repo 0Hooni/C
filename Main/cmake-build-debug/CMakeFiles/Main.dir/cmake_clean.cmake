@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Main.dir/Algo_HW.cpp.o"
+  "CMakeFiles/Main.dir/PS_test.cpp.o"
   "Main"
   "Main.pdb"
 )

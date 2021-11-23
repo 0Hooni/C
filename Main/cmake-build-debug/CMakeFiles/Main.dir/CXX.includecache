@@ -6,11 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/Users/dev_klein.h/Desktop/CODE/C/Main/Algo_HW.cpp
+/Users/dev_klein.h/Desktop/CODE/C/Main/PS_test.cpp
 iostream
 -
-string
--
 vector
+-
+string.h
+-
+algorithm
+-
+stack
+-
+queue
 -
 
