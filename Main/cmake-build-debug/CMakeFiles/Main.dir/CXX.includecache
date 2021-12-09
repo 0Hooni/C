@@ -9,14 +9,8 @@
 /Users/dev_klein.h/Desktop/CODE/C/Main/PS_test.cpp
 iostream
 -
-vector
+fstream
 -
-string.h
--
-algorithm
--
-stack
--
-queue
+string
 -
 
