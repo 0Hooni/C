@@ -1,30 +1,34 @@
 #include <iostream>
+#include <string.h>
 #include <vector>
 #include <algorithm>
+#include <stack>
+#include <queue>
 #include <math.h>
 #include <utility>
 #include <set>
 using namespace std;
-void init(){
+void init() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
 }
+
 int main(){
     init();
     int n; cin >> n;
-    set<string> s;
-    for(int i=0; i<n; i++){
-        string str; cin >> str;
-        string task; cin >> task;
-        if(task=="enter")
-            s.insert(str);
-        else
-            s.erase(str);
-
+    queue<int> q;
+    for(int i=1; i<=n; i++){
+        q.push(i);
     }
-    for(auto i = s.rbegin(); i != s.rend(); i++)
-        cout << *i << "\n";
+
+    while (q.size() != 1){
+        q.pop();
+        q.push(q.front());
+        q.pop();
+    }
+
+    cout << q.front();
 
     return 0;
 }
